@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/marks.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Cell.cs" type="Script" id=2]
+
+[node name="Cell" type="Sprite"]
+texture = ExtResource( 1 )
+centered = false
+hframes = 3
+script = ExtResource( 2 )
+
+[node name="Mark" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+hframes = 3
