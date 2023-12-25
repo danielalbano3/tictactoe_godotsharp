@@ -1,19 +1,44 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scenes/Cell.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/Main.cs" type="Script" id=2]
 [ext_resource path="res://Assets/bar.png" type="Texture" id=3]
+[ext_resource path="res://Assets/barw.png" type="Texture" id=4]
+[ext_resource path="res://Assets/marks.png" type="Texture" id=5]
+[ext_resource path="res://Main.tres" type="Theme" id=6]
+
+[sub_resource type="AtlasTexture" id=7]
+flags = 4
+atlas = ExtResource( 5 )
+region = Rect2( 100, 0, 100, 100 )
+
+[sub_resource type="InputEventAction" id=5]
+action = "reload"
+
+[sub_resource type="ShortCut" id=6]
+shortcut = SubResource( 5 )
+
+[sub_resource type="InputEventAction" id=3]
+action = "quit"
+
+[sub_resource type="ShortCut" id=4]
+shortcut = SubResource( 3 )
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 2 )
 
-[node name="Bars" type="Control" parent="."]
+[node name="Control" type="Control" parent="."]
 margin_left = 352.0
 margin_top = 232.0
 margin_right = 392.0
 margin_bottom = 272.0
+theme = ExtResource( 6 )
 
-[node name="TextureRect" type="TextureRect" parent="Bars"]
+[node name="Bars" type="Control" parent="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/Bars"]
 margin_left = -8.0
 margin_top = -8.0
 margin_right = 92.0
@@ -21,7 +46,7 @@ margin_bottom = 92.0
 rect_scale = Vector2( 3.51749, 0.191024 )
 texture = ExtResource( 3 )
 
-[node name="TextureRect2" type="TextureRect" parent="Bars"]
+[node name="TextureRect2" type="TextureRect" parent="Control/Bars"]
 margin_left = -8.0
 margin_top = 112.0
 margin_right = 92.0
@@ -29,7 +54,7 @@ margin_bottom = 212.0
 rect_scale = Vector2( 3.51749, 0.191024 )
 texture = ExtResource( 3 )
 
-[node name="TextureRect3" type="TextureRect" parent="Bars"]
+[node name="TextureRect3" type="TextureRect" parent="Control/Bars"]
 margin_left = 115.102
 margin_top = -112.0
 margin_right = 215.102
@@ -38,7 +63,7 @@ rect_rotation = 90.0
 rect_scale = Vector2( 3.51749, 0.191024 )
 texture = ExtResource( 3 )
 
-[node name="TextureRect4" type="TextureRect" parent="Bars"]
+[node name="TextureRect4" type="TextureRect" parent="Control/Bars"]
 margin_left = 236.0
 margin_top = -112.0
 margin_right = 336.0
@@ -46,6 +71,70 @@ margin_bottom = -12.0
 rect_rotation = 90.0
 rect_scale = Vector2( 3.51749, 0.191024 )
 texture = ExtResource( 3 )
+
+[node name="Labels" type="Control" parent="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="Turn" type="Label" parent="Control/Labels"]
+margin_left = -264.0
+margin_top = -120.0
+margin_right = -219.0
+margin_bottom = -90.0
+text = "Turn"
+
+[node name="DeclareLabel" type="Label" parent="Control/Labels"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = 124.0
+margin_top = -184.0
+margin_right = 124.0
+margin_bottom = -147.0
+grow_horizontal = 2
+
+[node name="GameOverLabel" type="Label" parent="Control/Labels"]
+margin_left = 144.0
+margin_top = 284.0
+margin_right = 184.0
+margin_bottom = 321.0
+grow_horizontal = 2
+
+[node name="TurnSign" type="TextureRect" parent="Control"]
+margin_left = -272.0
+margin_top = -68.0
+margin_right = -232.0
+margin_bottom = -28.0
+texture = SubResource( 7 )
+
+[node name="Buttons" type="VBoxContainer" parent="Control"]
+margin_left = 424.0
+margin_top = -112.0
+margin_right = 624.0
+margin_bottom = 88.0
+custom_constants/separation = 10
+
+[node name="Next" type="Button" parent="Control/Buttons"]
+margin_right = 200.0
+margin_bottom = 43.0
+text = "Next"
+
+[node name="Reload" type="Button" parent="Control/Buttons"]
+margin_top = 53.0
+margin_right = 200.0
+margin_bottom = 96.0
+theme = ExtResource( 6 )
+shortcut_in_tooltip = false
+shortcut = SubResource( 6 )
+text = "Reload"
+
+[node name="Quit" type="Button" parent="Control/Buttons"]
+margin_top = 106.0
+margin_right = 200.0
+margin_bottom = 149.0
+theme = ExtResource( 6 )
+shortcut_in_tooltip = false
+shortcut = SubResource( 4 )
+text = "Quit"
 
 [node name="Cells" type="Node2D" parent="."]
 position = Vector2( 348, 120 )
@@ -67,3 +156,12 @@ position = Vector2( 348, 120 )
 [node name="Cell8" parent="Cells" instance=ExtResource( 1 )]
 
 [node name="Cell9" parent="Cells" instance=ExtResource( 1 )]
+
+[node name="Slasher" type="TextureRect" parent="."]
+margin_left = 384.0
+margin_top = 400.0
+margin_right = 484.0
+margin_bottom = 500.0
+rect_rotation = -40.9
+rect_scale = Vector2( 3.517, 0.191 )
+texture = ExtResource( 4 )

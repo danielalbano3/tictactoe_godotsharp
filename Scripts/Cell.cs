@@ -4,15 +4,18 @@ using System;
 public class Cell : Sprite
 {
     private Sprite Mark;
-    private bool HasMark;
+    public bool HasMark;
     [Signal] public delegate void ClickSignal(Cell _cell);
     public int row;
     public int col;
+    public string marker;
+    public static bool IsPlayerTurn;
 
     public override void _Ready()
     {
+        IsPlayerTurn = true;
+        marker = "";
         HasMark = false;
-        Texture = ResourceLoader.Load<Texture>("res://Assets/marks.png");
         Mark = GetNode<Sprite>("Mark");
     }
 
@@ -29,9 +32,11 @@ public class Cell : Sprite
     public void MarkCell(bool _itsX)
     {
         Mark.Frame = _itsX ? 1 : 2;
+        marker = _itsX ? "x" : "o";
+        HasMark = true;
     }
 
-    public override void _Input(InputEvent @event)
+    public void _CellInput(InputEvent @event)
     {
         if (HasMark)
         {
@@ -41,11 +46,9 @@ public class Cell : Sprite
             btn.ButtonIndex == (int)ButtonList.Left && 
             btn.Pressed)
         {
-            if (GetRect().HasPoint(ToLocal(btn.Position)))
+            if (GetRect().HasPoint(ToLocal(btn.Position)) && IsPlayerTurn)
             {
-                GD.Print("Working");
                 EmitSignal("ClickSignal", this);
-                HasMark = true;
             }
         }
     }
