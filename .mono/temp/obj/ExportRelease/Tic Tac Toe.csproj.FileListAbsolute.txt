@@ -1,0 +1,9 @@
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\bin\ExportRelease\Tic Tac Toe.dll
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\bin\ExportRelease\Tic Tac Toe.pdb
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.csproj.AssemblyReference.cache
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.GeneratedMSBuildEditorConfig.editorconfig
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.AssemblyInfoInputs.cache
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.AssemblyInfo.cs
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.csproj.CoreCompileInputs.cache
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.dll
+C:\Godot3CS\Projects\TicTacToe\.mono\temp\obj\ExportRelease\Tic Tac Toe.pdb

@@ -32,6 +32,21 @@ public class Main : Control
     private TextureRect Bar1;
     private TextureRect Bar2;
 
+    private Button NextBtn;
+    private Button QuitBtn;
+    private Button ReloadBtn;
+    private Button BackBtn;
+
+    private TextureRect PlayerSign;
+    private TextureRect OpponentSign;
+
+    private Label TurnLabel;
+    private Button CreditBtn;
+
+    private VBoxContainer MarkerChoices;
+    private Label CreditsLabel;
+    private Button CloseCreditsBtn;
+
     public override void _Ready()
     {
         Bar1 = GetNode<TextureRect>("SlasherControl/Bar1");
@@ -47,7 +62,7 @@ public class Main : Control
         Overlay = GetNode<CanvasLayer>("Overlay");
         XBtn = GetNode<TextureButton>("Overlay/MarkerChoices/Choices/X");
         OBtn = GetNode<TextureButton>("Overlay/MarkerChoices/Choices/O");
-        ExitBtn = GetNode<Button>("Overlay/ExitBtn");
+        ExitBtn = GetNode<Button>("Overlay/OverlayBtns/ExitBtn");
 
         ExitBtn.Connect("pressed", this, "ExitGame");
         XBtn.Connect("pressed", this, "SetPlayersMarkChoice", new Godot.Collections.Array {"x"});
@@ -66,12 +81,89 @@ public class Main : Control
         OpponentScore = 0;
 
         Overlay.Visible = true;
-        Bar1.Visible = false;
-        Bar2.Visible = false;
+
+        NextBtn = GetNode<Button>("OptionsButtons/NextBtn");
+        NextBtn.Connect("pressed", this, "NextRound");
+
+        QuitBtn = GetNode<Button>("OptionsButtons/QuitBtn");
+        QuitBtn.Connect("pressed", this, "ExitGame");
+
+        ReloadBtn = GetNode<Button>("OptionsButtons/ReloadBtn");
+        ReloadBtn.Connect("pressed", this, "ReloadGame");
+
+        BackBtn = GetNode<Button>("OptionsButtons/BackBtn");
+        BackBtn.Connect("pressed", this, "ResetGame");
+
+        PlayerSign = GetNode<TextureRect>("ScoreboardBox/VsBox/PlayerBox/PlayerSign");
+        OpponentSign = GetNode<TextureRect>("ScoreboardBox/VsBox/OpponentBox/OpponentSign");
+
+        TurnLabel = GetNode<Label>("ScoreboardBox/TurnLabel");
+        ResultLabel.Hide();
+
+        CreditBtn = GetNode<Button>("Overlay/OverlayBtns/CredBtn");
+        CreditBtn.Connect("pressed", this, "ToggleMarkerChoices");
+
+        MarkerChoices = GetNode<VBoxContainer>("Overlay/MarkerChoices");
+        CreditsLabel = GetNode<Label>("Overlay/TitleHeader/CreditsLabel");
+
+        CloseCreditsBtn = GetNode<Button>("Overlay/CloseCreditsBtn");
+        CloseCreditsBtn.Connect("pressed", this, "ToggleMarkerChoices");
+    }
+    
+    private void ToggleMarkerChoices()
+    {
+        CloseCreditsBtn.Visible = !CloseCreditsBtn.Visible;
+        CreditsLabel.Visible = !CreditsLabel.Visible;
+        MarkerChoices.Visible = !MarkerChoices.Visible;
+        CreditBtn.Visible = !CreditBtn.Visible;
+        ExitBtn.Visible = !ExitBtn.Visible;
+    }
+
+    private void ResetGame()
+    {
+        GetTree().ReloadCurrentScene();
+    }
+
+    private void ReloadGame()
+    {
+        ResetScore();
+        NextRound();
+    }
+
+    private void ResetRound()
+    {
+        IsEndRound = false;
+        ResetSlashes();
+        UnMarkCells();
+        ResultLabel.Hide();
+    }
+
+    private void ResetScore()
+    {
+        PlayerScore = 0;
+        OpponentScore = 0;
+        UpdateScore();
+    }
+
+    private void NextRound()
+    {
+        ResetRound();
+
+        PlayersTurn = PlayerMark == "x";
+        TurnLabel.Show();
+        StartGame();
+    }
+
+    private void ResetSlashes()
+    {
+        Bar1.SetPosition(new Vector2(1204f, 532f));
+        Bar2.SetPosition(new Vector2(668f,692f));
     }
 
     private void SetPlayersMarkChoice(string choice)
     {
+        Texture temp;
+
         if (choice == "x")
         {
             PlayerMark = "x";
@@ -83,6 +175,10 @@ public class Main : Control
             PlayerMark = "o";
             OpponentMark = "x";
             PlayersTurn = false;
+
+            temp = PlayerSign.Texture;
+            PlayerSign.Texture = OpponentSign.Texture;
+            OpponentSign.Texture = temp;
         }
         StartGame();
     }
@@ -92,9 +188,16 @@ public class Main : Control
         GetTree().Quit();
     }
 
+    private void UpdateTurnLabel()
+    {
+        TurnLabel.Text = PlayersTurn ? "Your Turn" : "Opponent's Turn";
+    }
+
     private void StartGame()
     {
         Overlay.Hide();
+        NextBtn.Disabled = true;
+        UpdateTurnLabel();
         if (!PlayersTurn)
         {
             PCPlay();
@@ -127,6 +230,7 @@ public class Main : Control
             }
         }
         PlayersTurn = true;
+        UpdateTurnLabel();
     }
 
     private void ClickCell(TextureButton cell)
@@ -135,6 +239,7 @@ public class Main : Control
         {
             MarkCell(true, cell);
             PlayersTurn = false;
+            UpdateTurnLabel();
             PCPlay();
         }
     }
@@ -151,12 +256,12 @@ public class Main : Control
         {
             if (PlayerMark == "x")
             {
-                img.Region = new Rect2(0f,100f,100f,100f);
+                img.Region = new Rect2(100f,0f,100f,100f);
                 mark = "x";
             }
             else
             {
-                img.Region = new Rect2(100f,100f,100f,100f);
+                img.Region = new Rect2(200f,0f,100f,100f);
                 mark = "o";
             }
         }
@@ -164,12 +269,12 @@ public class Main : Control
         {
             if (OpponentMark == "x")
             {
-                img.Region = new Rect2(0f,100f,100f,100f);
+                img.Region = new Rect2(100f,0f,100f,100f);
                 mark = "x";
             }
             else
             {
-                img.Region = new Rect2(100f,100f,100f,100f);
+                img.Region = new Rect2(200f,0f,100f,100f);
                 mark = "o";
             }
         }
@@ -178,6 +283,28 @@ public class Main : Control
         cell.Disabled = true;
         RecordMarks(cell, mark);
         CheckForWinner();
+    }
+
+    private void UnMarkCells()
+    {
+        AtlasTexture img = new AtlasTexture();
+        img.Atlas = texture;
+        img.Region = new Rect2(200f, 100f, 100f, 100f);
+
+        foreach (TextureButton cell in CellList)
+        {
+            cell.TextureNormal = img;
+            cell.Disabled = false;
+        }
+        ResetRecordMarks();
+    }
+
+    private void ResetRecordMarks()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            marksArray[i] = null;
+        }
     }
 
     private void RecordMarks(TextureButton cell, string mark)
@@ -189,7 +316,7 @@ public class Main : Control
     private void CheckForWinner()
     {
         string pattern = "";
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 8; i++)
         {
             switch(i)
             {
@@ -217,27 +344,12 @@ public class Main : Control
                 case 7:
                     pattern = marksArray[2] + marksArray[4] + marksArray[6];
                     break;
-                
-                case 8:
-                    pattern = marksArray[1] + marksArray[4] + marksArray[7] + marksArray[3] + marksArray[5];
-                    break;
-                case 9:
-                    pattern = marksArray[0] + marksArray[4] + marksArray[8] + marksArray[2] + marksArray[6];
-                    break;
             }
             if (pattern == "xxx")
             {
                 DeclareWinner("x", i);
             }
             else if (pattern == "ooo")
-            {
-                DeclareWinner("o", i);
-            }
-            else if (pattern == "xxxxx")
-            {
-                DeclareWinner("x", i);
-            }
-            else if (pattern == "ooooo")
             {
                 DeclareWinner("o", i);
             }
@@ -263,9 +375,17 @@ public class Main : Control
             ResultLabel.Text = "You Lose!";
             AddPointOpponent();
         }
-        ResultLabel.Show();
         DrawSlash(casePattern);
+
+        EndRoundDisplay();
+    }
+
+    private void EndRoundDisplay()
+    {
+        ResultLabel.Show();
         IsEndRound = true;
+        NextBtn.Disabled = false;
+        TurnLabel.Hide();
     }
 
     private void CheckForDraw()
@@ -283,7 +403,7 @@ public class Main : Control
     private void DeclareDraw()
     {
         ResultLabel.Text = "It's a Draw!";
-        ResultLabel.Show();
+        EndRoundDisplay();
     }
 
     private void AddPointPlayer()
@@ -306,7 +426,6 @@ public class Main : Control
 
     private void DrawSlash(int pattern)
     {
-        Bar1.Visible = true;
         switch(pattern)
         {
             case 0:
@@ -314,8 +433,8 @@ public class Main : Control
                 Bar1.SetRotation(0f);
                 break;
             case 1:
-                Bar1.SetPosition(new Vector2(416f,264f));
-                Bar1.SetRotation(0f);
+                Bar2.SetPosition(new Vector2(416f,264f));
+                Bar2.SetRotation(0f);
                 break;
             case 2:
                 Bar1.SetPosition(new Vector2(416f,384f));
@@ -340,24 +459,10 @@ public class Main : Control
                 Bar1.SetRotation((float)(Math.PI / 4));
                 break;
             case 7:
-                Bar1.SetPosition(new Vector2(852f,92f));
-                Bar1.SetRotation((float)(3 * Math.PI / 4));
-                break;
-
-            case 8:
-                Bar1.SetPosition(new Vector2(672f,28f));
-                Bar1.SetRotation((float)(Math.PI / 2));
-                Bar2.Visible = true;
-                Bar2.SetPosition(new Vector2(416f,264f));
-                Bar2.SetRotation(0f);
-                break;
-            case 9:
-                Bar1.SetPosition(new Vector2(496f,92f));
-                Bar1.SetRotation((float)(Math.PI / 4));
-                Bar2.Visible = true;
                 Bar2.SetPosition(new Vector2(852f,92f));
                 Bar2.SetRotation((float)(3 * Math.PI / 4));
                 break;
+
         }
     }
 }

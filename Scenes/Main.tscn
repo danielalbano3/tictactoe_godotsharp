@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Fonts/coolvetica compressed hv.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://Assets/marks.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scripts/Main.cs" type="Script" id=4]
 [ext_resource path="res://Assets/bar.png" type="Texture" id=5]
 [ext_resource path="res://Assets/barw.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Audio/song18.mp3" type="AudioStream" id=7]
 
 [sub_resource type="DynamicFont" id=9]
 size = 100
@@ -50,7 +51,7 @@ region = Rect2( 200, 0, 100, 100 )
 [sub_resource type="AtlasTexture" id=4]
 flags = 4
 atlas = ExtResource( 2 )
-region = Rect2( 0, 0, 100, 100 )
+region = Rect2( 200, 100, 100, 100 )
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -58,13 +59,27 @@ anchor_bottom = 1.0
 theme = ExtResource( 3 )
 script = ExtResource( 4 )
 
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.121569, 0.52549, 0.109804, 1 )
+
 [node name="Overlay" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="ColorRect" type="ColorRect" parent="Overlay"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.0470588, 0.0980392, 0.258824, 0.937255 )
+
+[node name="CloseCreditsBtn" type="Button" parent="Overlay"]
+visible = false
+margin_left = 408.0
+margin_top = 508.0
+margin_right = 608.0
+margin_bottom = 558.0
+theme = ExtResource( 3 )
+shortcut_in_tooltip = false
+text = "Close"
 
 [node name="TitleHeader" type="Control" parent="Overlay"]
 margin_left = 4.0
@@ -95,15 +110,38 @@ rect_scale = Vector2( 0.6, 0.6 )
 theme = ExtResource( 3 )
 text = "3Daniel Games"
 
+[node name="CreditsLabel" type="Label" parent="Overlay/TitleHeader"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 268.0
+margin_top = 248.0
+margin_right = 911.0
+margin_bottom = 645.0
+rect_scale = Vector2( 0.7, 0.7 )
+theme = ExtResource( 3 )
+text = "Programmer
+Daniel Albano III
+
+Game Engine
+Godot 3.5
+Written in C#
+
+Music:
+https://opengameart.org/content/crystal-cave-song18
+
+"
+align = 1
+
 [node name="MarkerChoices" type="VBoxContainer" parent="Overlay"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -128.0
-margin_top = -48.0
+margin_top = -84.0
 margin_right = 123.0
-margin_bottom = 109.0
+margin_bottom = 73.0
 theme = ExtResource( 3 )
 custom_constants/separation = 20
 
@@ -138,14 +176,26 @@ texture_normal = SubResource( 6 )
 texture_hover = SubResource( 8 )
 stretch_mode = 3
 
-[node name="ExitBtn" type="Button" parent="Overlay"]
-margin_left = 468.0
-margin_top = 504.0
-margin_right = 537.0
-margin_bottom = 547.0
+[node name="OverlayBtns" type="VBoxContainer" parent="Overlay"]
+margin_left = 384.0
+margin_top = 388.0
+margin_right = 634.0
+margin_bottom = 494.0
+custom_constants/separation = 20
+
+[node name="CredBtn" type="Button" parent="Overlay/OverlayBtns"]
+margin_right = 250.0
+margin_bottom = 43.0
+theme = ExtResource( 3 )
+text = "Credits"
+
+[node name="ExitBtn" type="Button" parent="Overlay/OverlayBtns"]
+margin_top = 63.0
+margin_right = 250.0
+margin_bottom = 106.0
 theme = ExtResource( 3 )
 shortcut_in_tooltip = false
-text = "EXIT"
+text = "Exit"
 
 [node name="ScoreboardBox" type="VBoxContainer" parent="."]
 margin_left = 28.0
@@ -182,7 +232,7 @@ size_flags_horizontal = 3
 [node name="PlayerLabel" type="Label" parent="ScoreboardBox/VsBox/PlayerBox"]
 margin_right = 160.0
 margin_bottom = 37.0
-text = "Player"
+text = "You"
 align = 1
 
 [node name="PlayerScore" type="Label" parent="ScoreboardBox/VsBox/PlayerBox"]
@@ -235,13 +285,14 @@ custom_constants/separation = 10
 [node name="NextBtn" type="Button" parent="OptionsButtons"]
 margin_right = 300.0
 margin_bottom = 43.0
+disabled = true
 text = "Next"
 
 [node name="ReloadBtn" type="Button" parent="OptionsButtons"]
 margin_top = 53.0
 margin_right = 300.0
 margin_bottom = 96.0
-text = "Reload"
+text = "Reset"
 
 [node name="BackBtn" type="Button" parent="OptionsButtons"]
 margin_top = 106.0
@@ -249,11 +300,11 @@ margin_right = 300.0
 margin_bottom = 149.0
 text = "Back"
 
-[node name="ExitBtn" type="Button" parent="OptionsButtons"]
+[node name="QuitBtn" type="Button" parent="OptionsButtons"]
 margin_top = 159.0
 margin_right = 300.0
 margin_bottom = 202.0
-text = "Exit"
+text = "Quit"
 
 [node name="ResultLabel" type="Label" parent="."]
 margin_left = 624.0
@@ -370,16 +421,22 @@ margin_right = 40.0
 margin_bottom = 40.0
 
 [node name="Bar1" type="TextureRect" parent="SlasherControl"]
-margin_left = 852.0
-margin_top = 92.0
-margin_right = 952.0
-margin_bottom = 192.0
+margin_left = 1204.0
+margin_top = 532.0
+margin_right = 1304.0
+margin_bottom = 632.0
 rect_rotation = 135.0
 rect_scale = Vector2( 5, 0.1 )
 texture = ExtResource( 6 )
 
 [node name="Bar2" type="TextureRect" parent="SlasherControl"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_left = 668.0
+margin_top = 692.0
+margin_right = 768.0
+margin_bottom = 792.0
 rect_scale = Vector2( 5, 0.1 )
 texture = ExtResource( 6 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+autoplay = true
