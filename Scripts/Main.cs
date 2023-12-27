@@ -14,7 +14,6 @@ public class Main : Control
     private CanvasLayer Overlay;
     private TextureButton XBtn;
     private TextureButton OBtn;
-    private Button ExitBtn;
 
     private Control Cells;
     private List<TextureButton> CellList;
@@ -33,7 +32,6 @@ public class Main : Control
     private TextureRect Bar2;
 
     private Button NextBtn;
-    private Button QuitBtn;
     private Button ReloadBtn;
     private Button BackBtn;
 
@@ -62,9 +60,7 @@ public class Main : Control
         Overlay = GetNode<CanvasLayer>("Overlay");
         XBtn = GetNode<TextureButton>("Overlay/MarkerChoices/Choices/X");
         OBtn = GetNode<TextureButton>("Overlay/MarkerChoices/Choices/O");
-        ExitBtn = GetNode<Button>("Overlay/OverlayBtns/ExitBtn");
 
-        ExitBtn.Connect("pressed", this, "ExitGame");
         XBtn.Connect("pressed", this, "SetPlayersMarkChoice", new Godot.Collections.Array {"x"});
         OBtn.Connect("pressed", this, "SetPlayersMarkChoice", new Godot.Collections.Array {"o"});
 
@@ -84,9 +80,6 @@ public class Main : Control
 
         NextBtn = GetNode<Button>("OptionsButtons/NextBtn");
         NextBtn.Connect("pressed", this, "NextRound");
-
-        QuitBtn = GetNode<Button>("OptionsButtons/QuitBtn");
-        QuitBtn.Connect("pressed", this, "ExitGame");
 
         ReloadBtn = GetNode<Button>("OptionsButtons/ReloadBtn");
         ReloadBtn.Connect("pressed", this, "ReloadGame");
@@ -109,14 +102,13 @@ public class Main : Control
         CloseCreditsBtn = GetNode<Button>("Overlay/CloseCreditsBtn");
         CloseCreditsBtn.Connect("pressed", this, "ToggleMarkerChoices");
     }
-    
+
     private void ToggleMarkerChoices()
     {
         CloseCreditsBtn.Visible = !CloseCreditsBtn.Visible;
         CreditsLabel.Visible = !CreditsLabel.Visible;
         MarkerChoices.Visible = !MarkerChoices.Visible;
         CreditBtn.Visible = !CreditBtn.Visible;
-        ExitBtn.Visible = !ExitBtn.Visible;
     }
 
     private void ResetGame()
@@ -181,11 +173,6 @@ public class Main : Control
             OpponentSign.Texture = temp;
         }
         StartGame();
-    }
-
-    private void ExitGame()
-    {
-        GetTree().Quit();
     }
 
     private void UpdateTurnLabel()

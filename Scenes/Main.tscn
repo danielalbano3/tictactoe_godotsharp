@@ -189,14 +189,6 @@ margin_bottom = 43.0
 theme = ExtResource( 3 )
 text = "Credits"
 
-[node name="ExitBtn" type="Button" parent="Overlay/OverlayBtns"]
-margin_top = 63.0
-margin_right = 250.0
-margin_bottom = 106.0
-theme = ExtResource( 3 )
-shortcut_in_tooltip = false
-text = "Exit"
-
 [node name="ScoreboardBox" type="VBoxContainer" parent="."]
 margin_left = 28.0
 margin_top = 24.0
@@ -299,12 +291,6 @@ margin_top = 106.0
 margin_right = 300.0
 margin_bottom = 149.0
 text = "Back"
-
-[node name="QuitBtn" type="Button" parent="OptionsButtons"]
-margin_top = 159.0
-margin_right = 300.0
-margin_bottom = 202.0
-text = "Quit"
 
 [node name="ResultLabel" type="Label" parent="."]
 margin_left = 624.0
